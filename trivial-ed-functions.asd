@@ -7,7 +7,7 @@
       :serial t
       :components
         ((:file "packages")
-         #-(or sbcl clasp) (:file "fallback"))))
+         (:file "interface"))))
   . #+asdf3
       (:version "0.1"
        :homepage "https://yitzchak.github.io/trivial-ed-functions/"

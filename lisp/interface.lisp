@@ -25,9 +25,9 @@ FILE-ERROR to indicate failure to perform an operation on the file system.")
 
 
 ; Support implementations that have a single hook, but only add feature if actually present.
-#+(or allegro ccl)
-(let ((sym (find-symbol #+allegro "*ED-HOOK*" #+ccl "*RESIDENT-EDITOR-HOOK*"
-                        #+allegro "SCM" #+ccl "CCL")))
+#+(or allegro ccl mezzano)
+(let ((sym (find-symbol #+(or allegro mezzano) "*ED-HOOK*" #+ccl "*RESIDENT-EDITOR-HOOK*"
+                        #+allegro "SCM" #+ccl "CCL" #+mezzano "MEZZANO.EXTENSIONS")))
   (when sym
     (setf (symbol-value sym) #'ed-hook)
     (pushnew :ed-functions *features*)))

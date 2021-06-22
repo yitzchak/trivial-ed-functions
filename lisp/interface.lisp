@@ -3,9 +3,10 @@
 
 (defvar *ed-functions* '()
   "If supported by the current lisp implementation then functions from the
-list EXT:*ED-FUNCTIONS* are called in order with X as an argument until one
-of them returns non-NIL; these functions are responsible for signalling a
-FILE-ERROR to indicate failure to perform an operation on the file system.")
+list TRIVIAL-ED-FUNCTIONS:*ED-FUNCTIONS* are called in order by ED with X
+as an argument until one of them returns non-NIL; these functions are
+responsible for signalling a FILE-ERROR to indicate failure to perform an
+operation on the file system.")
 
 
 (defun ed-hook (&optional x)

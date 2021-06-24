@@ -16,20 +16,23 @@ operation on the file system.")
       (return t))))
 
 
-; Support implementations that have an existing *ED-FUNCTIONS*, but only add feature if actually present.
-#+(or abcl clasp ecl sbcl)
-(let ((sym (find-symbol "*ED-FUNCTIONS*" #+sbcl "SB-EXT" #+(or abcl clasp ecl) "EXT")))
+#+(or abcl allegro ccl clasp ecl mezzano sbcl)
+(let ((sym (find-symbol #+(or abcl clasp ecl sbcl) "*ED-FUNCTIONS*"
+                        #+(or allegro mezzano) "*ED-HOOK*"
+                        #+ccl "*RESIDENT-EDITOR-HOOK*"
+                        ; Package name
+                        #+sbcl "SB-EXT"
+                        #+(or abcl clasp ecl) "EXT"
+                        #+allegro "SCM"
+                        #+ccl "CCL"
+                        #+mezzano "MEZZANO.EXTENSIONS")))
   (when sym
-    (shadowing-import sym "TRIVIAL-ED-FUNCTIONS")
-    (export (find-symbol "*ED-FUNCTIONS*" "TRIVIAL-ED-FUNCTIONS"))
-    (pushnew :ed-functions *features*)))
-
-
-; Support implementations that have a single hook, but only add feature if actually present.
-#+(or allegro ccl mezzano)
-(let ((sym (find-symbol #+(or allegro mezzano) "*ED-HOOK*" #+ccl "*RESIDENT-EDITOR-HOOK*"
-                        #+allegro "SCM" #+ccl "CCL" #+mezzano "MEZZANO.EXTENSIONS")))
-  (when sym
+    #+(or abcl clasp ecl sbcl) ; implementations that have a native *ed-functions*
+    (progn
+      (setf (documentation sym 'variable) (documentation '*ed-functions* 'variable))
+      (shadowing-import sym "TRIVIAL-ED-FUNCTIONS")
+      (export (find-symbol "*ED-FUNCTIONS*" "TRIVIAL-ED-FUNCTIONS")))
+    #+(or allegro ccl mezzano) ; implementations that have a single hook
     (setf (symbol-value sym) #'ed-hook)
     (pushnew :ed-functions *features*)))
 
